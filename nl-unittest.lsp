@@ -15,12 +15,21 @@
 
 ;;; define some terminal color
 
-(constant '+fg-red+    "\\\\033[1;31m")
-(constant '+fg-green+  "\\\\033[32m")
+(constant '+fg-light-red+    "\027[31m")
+(constant '+fg-light-green+  "\027[32m")
+(constant '+fg-red+    "\027[1;31m")
+(constant '+fg-green+  "\027[1;32m")
+(constant '+fg-reset+  "\027[0m")
+
+(define (colorize color)
+  (letn ((color-name (term color))
+         (const-str (append "+" color-name "+"))
+         (color-sym (sym const-str)))
+    (append (eval color-sym) (apply append (args)) +fg-reset+)))
 
 (context 'UnitTest)
 
-(setq *enable-term-color*   nil)        ; wanna use colors in console?
+(setq *enable-term-color*   true)        ; wanna use colors in console?
 (setq *report-failed*       true)       ; wanna report failed assertions?
 (setq *report-passed*       true)       ; wanna report passed assertions?
 (setq *continue-after-failure* true)
@@ -35,20 +44,20 @@
 
 ;;; report result of a failed test
 (define (report-failure expression)
-  (and *report-failed*
-       (println (if *enable-term-color*
-                    TermColor:+fg-red+
-                    "")
-                "--> " expression " FAILED!"))
+  (let (str (append "--> " (string expression) " FAILED!"))
+    (if *report-failed*
+        (println (if *enable-term-color*
+                     (TermColor:colorize 'fg-light-red str)
+                     str))))
   nil)
 
 ;;; requert result of a passed test
 (define (report-pass expression)
-  (and *report-passed*
-       (println (if *enable-term-color*
-                    TermColor:+fg-green+
-                    "")
-                "--> " expression " passed"))
+  (let (str (append "--> " (string expression) " passed"))
+    (if *report-passed*
+        (println (if *enable-term-color*
+                     (TermColor:colorize 'fg-light-green str)
+                     str))))
   true)
 
 (define (assertion? form)
@@ -83,15 +92,17 @@
 
       (println "-> Total assertions: " total-ass)
       (println "   - "
-               (if (and (= 0 failed-ass)
+               (if (and (< 0 passed-ass)
                         *enable-term-color*)
-                   TermColor:+fg-green+ "")
-               passed-ass " pass(es)")
+                   (TermColor:colorize 'fg-green (string passed-ass)
+                                       " pass(es)")
+                   (append (string passed-ass) " pass(es)")))
       (println "   - "
                (if (and (< 0 failed-ass)
                         *enable-term-color*)
-                   TermColor:+fg-red+ "")
-               failed-ass " fail(s)!!!")
+                   (TermColor:colorize 'fg-red (string failed-ass)
+                                       " fail(s)!!!")
+                   (append (string failed-ass) " fail(s)!!!")))
       (println "   - Total time: " time-running "ms")
       (println)
 

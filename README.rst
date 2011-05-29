@@ -63,3 +63,4 @@ Links
 .. _`Lisp`: http://en.wikipedia.org/wiki/Lisp_(programming_language)
 
 .. target-notes::
+.. title:: newlisp-unittest - A simple unit testing framework for newLISP
