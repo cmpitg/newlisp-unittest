@@ -19,14 +19,18 @@
 (constant '+fg-light-green+  "\027[32m")
 (constant '+fg-red+          "\027[1;31m")
 (constant '+fg-green+        "\027[1;32m")
-(constant '+fg-reset+        "\027[0m")
+
+(constant '+bg-cyan+         "\027[46m")
+(constant '+bg-dark-gray+    "\027[1;40m")
+
+(constant '+reset+           "\027[0m")
 
 ;;; colorize a string
 (define (colorize color str)
   (letn ((color-name (term color))
          (const-str (append "+" color-name "+"))
          (color-sym (sym const-str)))
-    (append (eval color-sym) str +fg-reset+)))
+    (append (eval color-sym) str +reset+)))
 
 (context 'UnitTest)
 
@@ -49,7 +53,14 @@
         s)))
 
 (define (report-failure expression)
-  (let (report (colorize 'fg-light-red "--> " (string expression) " FAILED!"))
+  (let (report
+        (if (true? *verbose*)
+            (colorize 'fg-light-red "--> " (string expression) " FAILED!")
+            (colorize 'fg-light-red
+                      ;; "--> Expression: " (string (expression 2))
+                      "--> " (string expression)
+                      " => Expected: " (string (eval (expression 1)))
+                      " -> Received: " (string (eval (expression 2))) ".")))
     (if *report-failed*
         (println report)))
   nil)
@@ -76,9 +87,10 @@
 
 (define-macro (check test-case cur-test)
   (println)
-  (println "Testing " cur-test)
+  (println "Testing " (eval cur-test))
 
   (letn (time-running 0 result-list '())
+
     ;; calculate result and time at the same time
     (setq time-running
           (time (setq result-list (map report-result test-case))))
@@ -92,6 +104,7 @@
            (total-ass (+ passed-ass failed-ass))
            (msg-passed (append (string passed-ass) " pass(es)"))
            (msg-failed (append (string failed-ass) " fail(s)")))
+
       ;; colorize if necessary
       (if (< 0 passed-ass)
           (setq msg-passed (colorize 'fg-green msg-passed)))
@@ -106,6 +119,31 @@
 
       ;; the test case is considered passed only if there's no failure
       (= 0 failed-ass))))
+
+;;; run all test cases, aka functions of the form ``test_``
+(define (run-all cont)
+  (letn (counter 0 failed 0 passed 0 time-running 0)
+    (dotree (symbol cont)
+      (if (starts-with (term symbol) "test_")
+          (inc time-running
+               (time (if (apply symbol)
+                         (inc passed)
+                         (inc failed))))))
+
+    ;; make report and colorize if necessary
+    (setq counter (+ failed passed))
+
+    (println "STATUS:")
+    (println "==> RAN " counter " test(s) IN " time-running "ms")
+    (println "==> "
+             (if (zero? failed)
+                 (colorize 'bg-dark-gray
+                           (colorize 'fg-green "ALL PASSED!!!"))
+                 (colorize 'bg-dark-gray
+                           (colorize 'fg-red
+                                     "FAILED (failures = "
+                                     (string failed) ")"))))
+    (println)))
 
 ;;;
 ;;; convenient methods in context 'MAIN

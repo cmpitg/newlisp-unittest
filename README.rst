@@ -15,8 +15,9 @@ Optional Parameters
 * ``UnitTest:*verbose*``
 
   ``true`` if you want to output the whole assert expression, and
-  ``nil`` if you want the output to be of the form ``Expected:
-  <some-value>. Received: <some-value>``.  **Default value:** ``nil``.
+  ``nil`` if you want the output to be of the form ``=> Expected:
+  <some-value> -> Received: <some-value>``.  **Default value:**
+  ``nil``.
 
 * ``UnitTest:*continue-after-failure*``
 
