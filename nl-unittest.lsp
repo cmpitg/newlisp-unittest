@@ -32,7 +32,7 @@
 
 (setq *enable-term-color*       true)   ; use colors in console?
 (setq *report-failed*           true)   ; report failed assertions?
-(setq *report-passed*           true)   ; report passed assertions?
+(setq *report-passed*           nil)   ; report passed assertions?
 (setq *continue-after-failure*  true)
 (setq *verbose*                 nil)
 
@@ -89,21 +89,18 @@
                                        result-list)))
            (failed-ass (length (filter (lambda (x) (= nil x))
                                        result-list)))
-           (total-ass (+ passed-ass failed-ass)))
+           (total-ass (+ passed-ass failed-ass))
+           (msg-passed (append (string passed-ass) " pass(es)"))
+           (msg-failed (append (string failed-ass) " fail(s)")))
+      ;; colorize if necessary
+      (if (< 0 passed-ass)
+          (setq msg-passed (colorize 'fg-green msg-passed)))
+      (if (< 0 failed-ass)
+          (setq msg-failed (colorize 'fg-red msg-failed)))
 
       (println "-> Total assertions: " total-ass)
-      (println "   - "
-               (if (and (< 0 passed-ass)
-                        *enable-term-color*)
-                   (TermColor:colorize 'fg-green (string passed-ass)
-                                       " pass(es)")
-                   (append (string passed-ass) " pass(es)")))
-      (println "   - "
-               (if (and (< 0 failed-ass)
-                        *enable-term-color*)
-                   (TermColor:colorize 'fg-red (string failed-ass)
-                                       " fail(s)!!!")
-                   (append (string failed-ass) " fail(s)!!!")))
+      (println "   - " msg-passed)
+      (println "   - " msg-failed)
       (println "   - Total time: " time-running "ms")
       (println)
 

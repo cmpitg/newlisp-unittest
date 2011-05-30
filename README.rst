@@ -36,7 +36,7 @@ Optional Parameters
 * ``UnitTest:*report-passed*``
 
   ``true`` if you want to report passed assertions, and ``nil``
-  otherwise.  **Default value:** ``true``.
+  otherwise.  **Default value:** ``nil``.
 
 
 Using
