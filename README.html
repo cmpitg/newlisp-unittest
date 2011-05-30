@@ -325,14 +325,18 @@ modern dialect of <a class="reference external" href="http://en.wikipedia.org/wi
 <div class="section" id="optional-parameters">
 <h1>Optional Parameters</h1>
 <ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">UnitTest:*verbose*</span></tt></p>
+<p><tt class="docutils literal">true</tt> if you want to output the whole assert expression, and
+<tt class="docutils literal">nil</tt> if you want the output to be of the form <tt class="docutils literal">Expected:
+<span class="pre">&lt;some-value&gt;.</span> Received: <span class="pre">&lt;some-value&gt;</span></tt>.  <strong>Default value:</strong> <tt class="docutils literal">nil</tt>.</p>
+</li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">UnitTest:*continue-after-failure*</span></tt></p>
-<p>If you want to continue testing whatever the previous test case
-result is, set this to <tt class="docutils literal">true</tt>, otherwise set it to <tt class="docutils literal">nil</tt>.
-<strong>Default value:</strong> <tt class="docutils literal">true</tt>.</p>
+<p><tt class="docutils literal">true</tt> if you want to continue testing whatever the previous test
+case result is, and <tt class="docutils literal">nil</tt> otherwise.  <strong>Default value:</strong> <tt class="docutils literal">true</tt>.</p>
 </li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">UnitTest:*enable-term-color*</span></tt></p>
-<p>If you want to have colors in VT-100 compatible terminal, set it to
-<tt class="docutils literal">true</tt>, otherwise, set it to <tt class="docutils literal">nil</tt>.  <strong>Default value:</strong> <tt class="docutils literal">true</tt>.</p>
+<p><tt class="docutils literal">true</tt> if you want to have colors in VT-100 compatible terminal,
+and <tt class="docutils literal">nil</tt> otherwise.  <strong>Default value:</strong> <tt class="docutils literal">true</tt>.</p>
 </li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">UnitTest:*report-failed*</span></tt></p>
 <p><tt class="docutils literal">true</tt> if you want to report failed assertions, and <tt class="docutils literal">nil</tt>
@@ -346,16 +350,12 @@ otherwise.  <strong>Default value:</strong> <tt class="docutils literal">true</t
 </div>
 <div class="section" id="using">
 <h1>Using</h1>
-<p>1) First, load the main file <tt class="docutils literal"><span class="pre">nl-unittest.lsp</span></tt>.  You will have a
-defined context named <tt class="docutils literal">UnitTest</tt>.</p>
-<p>2) Define a test case with: <tt class="docutils literal">(deftest <span class="pre">(test-name</span> params) body*)</tt>.
-Remember to have convention for <tt class="docutils literal"><span class="pre">test-name</span></tt> or you might suffer from
-symbols conflicting.</p>
-<p>3) Whenever you want to run a test case, call its in exactly the same
-way you call function.</p>
-<p>4) If you want to run all the test cases at the same time, name the
-test with the prefix <tt class="docutils literal">test_</tt> and call <tt class="docutils literal"><span class="pre">(UnitTest:run-all</span>
-<span class="pre">context-symbol)</span></tt>.</p>
+<ol class="arabic simple">
+<li>First, load the main file <tt class="docutils literal"><span class="pre">nl-unittest.lsp</span></tt>.  You will have a defined context named <tt class="docutils literal">UnitTest</tt>.</li>
+<li>Define a test case with: <tt class="docutils literal"><span class="pre">(define-test</span> <span class="pre">(test-name</span> params) body*)</tt>.  Remember to have convention for <tt class="docutils literal"><span class="pre">test-name</span></tt> or you might suffer from symbols conflicting.</li>
+<li>Whenever you want to run a test case, call its in exactly the same way you call function.</li>
+<li>If you want to run all the test cases at the same time, name the test with the prefix <tt class="docutils literal">test_</tt> and call <tt class="docutils literal"><span class="pre">(UnitTest:run-all</span> <span class="pre">context-symbol)</span></tt>.</li>
+</ol>
 </div>
 <div class="section" id="license">
 <h1>License</h1>

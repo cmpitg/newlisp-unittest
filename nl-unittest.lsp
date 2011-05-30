@@ -21,41 +21,44 @@
 (constant '+fg-green+        "\027[1;32m")
 (constant '+fg-reset+        "\027[0m")
 
-(define (colorize color)
+;;; colorize a string
+(define (colorize color str)
   (letn ((color-name (term color))
          (const-str (append "+" color-name "+"))
          (color-sym (sym const-str)))
-    (append (eval color-sym) (apply append (args)) +fg-reset+)))
+    (append (eval color-sym) str +fg-reset+)))
 
 (context 'UnitTest)
 
-(setq *enable-term-color*       true)   ; wanna use colors in console?
-(setq *report-failed*           true)   ; wanna report failed
-                                        ; assertions?
-(setq *report-passed*           true)   ; wanna report passed
-                                        ; assertions?
+(setq *enable-term-color*       true)   ; use colors in console?
+(setq *report-failed*           true)   ; report failed assertions?
+(setq *report-passed*           true)   ; report passed assertions?
 (setq *continue-after-failure*  true)
+(setq *verbose*                 nil)
 
 ;;; current test in a test-case, *cur-test* help tracking a test which
 ;;; contains other test cases
 (setq *cur-test* '())
 
-;;; report result of a failed test
+;;; convert and concat all the arguments into a string and colorize it
+;;; if necessary
+(define (colorize color)
+  (letn (s (apply append (args)))
+    (if *enable-term-color*
+        (TermColor:colorize color s)
+        s)))
+
 (define (report-failure expression)
-  (let (str (append "--> " (string expression) " FAILED!"))
+  (let (report (colorize 'fg-light-red "--> " (string expression) " FAILED!"))
     (if *report-failed*
-        (println (if *enable-term-color*
-                     (TermColor:colorize 'fg-light-red str)
-                     str))))
+        (println report)))
   nil)
 
 ;;; requert result of a passed test
 (define (report-pass expression)
-  (let (str (append "--> " (string expression) " passed"))
+  (let (report (colorize 'fg-light-green "--> " (string expression) " passed"))
     (if *report-passed*
-        (println (if *enable-term-color*
-                     (TermColor:colorize 'fg-light-green str)
-                     str))))
+        (println report)))
   true)
 
 (define (assertion? form)
