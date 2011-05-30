@@ -17,7 +17,8 @@
 
 (define-test (test_two)
   (assert= "Hello" "Heo")
-  (assert= 6 (factorial 2)))
+  (assert= 6 (factorial 2))
+  (assert= 10 (f)))
 
 (define (factorial n)
   (if (= 0 n) 1

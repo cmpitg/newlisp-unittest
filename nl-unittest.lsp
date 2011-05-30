@@ -17,8 +17,10 @@
 
 (constant '+fg-light-red+    "\027[31m")
 (constant '+fg-light-green+  "\027[32m")
+(constant '+fg-light-yellow+ "\027[1;33m")
 (constant '+fg-red+          "\027[1;31m")
 (constant '+fg-green+        "\027[1;32m")
+(constant '+fg-yellow+       "\027[33m")
 
 (constant '+bg-cyan+         "\027[46m")
 (constant '+bg-dark-gray+    "\027[1;40m")
@@ -65,6 +67,16 @@
         (println report)))
   nil)
 
+(define (report-error expression msg)
+  (let (report
+        (colorize 'fg-light-yellow "--> " (string expression)
+                  " got error(s):\n"
+                  (join (map (lambda (s) (append "    " s))
+                             (parse msg "\n"))
+                        "\n")))
+    (println report))
+  nil)
+
 ;;; requert result of a passed test
 (define (report-pass expression)
   (let (report (colorize 'fg-light-green "--> " (string expression) " passed"))
@@ -78,12 +90,12 @@
              "assert="))
 
 (define (report-result test-case)
-  (let (res (eval test-case))
-    (if (assertion? test-case)          ; report only at assertion
-        (if res
-            (report-pass test-case)
-            (report-failure test-case))
-        'not-an-assertion)))
+  (catch (eval test-case) 'res)
+  (if (assertion? test-case)            ; report only at assertion
+      (if (= true res) (report-pass test-case)
+          (= nil res) (report-failure test-case)
+          (report-error test-case res))
+      'not-an-assertion))
 
 (define-macro (check test-case cur-test)
   (println)

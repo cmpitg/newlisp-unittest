@@ -51,6 +51,11 @@ Using
 
 4. If you want to run all the test cases at the same time, name the test with the prefix ``test_`` and call ``(UnitTest:run-all context-symbol)``.
 
+TODO
+====
+
+* Fix time calculation.
+
 License
 =======
 
