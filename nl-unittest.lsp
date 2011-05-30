@@ -17,9 +17,9 @@
 
 (constant '+fg-light-red+    "\027[31m")
 (constant '+fg-light-green+  "\027[32m")
-(constant '+fg-red+    "\027[1;31m")
-(constant '+fg-green+  "\027[1;32m")
-(constant '+fg-reset+  "\027[0m")
+(constant '+fg-red+          "\027[1;31m")
+(constant '+fg-green+        "\027[1;32m")
+(constant '+fg-reset+        "\027[0m")
 
 (define (colorize color)
   (letn ((color-name (term color))
@@ -29,18 +29,16 @@
 
 (context 'UnitTest)
 
-(setq *enable-term-color*   true)        ; wanna use colors in console?
-(setq *report-failed*       true)       ; wanna report failed assertions?
-(setq *report-passed*       true)       ; wanna report passed assertions?
-(setq *continue-after-failure* true)
+(setq *enable-term-color*       true)   ; wanna use colors in console?
+(setq *report-failed*           true)   ; wanna report failed
+                                        ; assertions?
+(setq *report-passed*           true)   ; wanna report passed
+                                        ; assertions?
+(setq *continue-after-failure*  true)
 
 ;;; current test in a test-case, *cur-test* help tracking a test which
 ;;; contains other test cases
 (setq *cur-test* '())
-
-;; (setq *total-assert*  0)                ; current number of assertions
-;; (setq *passed-assert* 0)                ; number of passed assertions
-;; (setq *failed-assert* 0)                ; number of failed assertions
 
 ;;; report result of a failed test
 (define (report-failure expression)
@@ -73,9 +71,9 @@
             (report-failure test-case))
         'not-an-assertion)))
 
-(define-macro (check test-case)
+(define-macro (check test-case cur-test)
   (println)
-  (println "Testing " *cur-test*)
+  (println "Testing " cur-test)
 
   (letn (time-running 0 result-list '())
     ;; calculate result and time at the same time
@@ -134,7 +132,7 @@
   (eval (expand '(define signature
                   (let ((UnitTest:*cur-test*
                          (append UnitTest:*cur-test* '(test-name))))
-                    (UnitTest:check exps)))
+                    (UnitTest:check exps UnitTest:*cur-test*)))
                 (list (list 'signature  params)
                       (list 'exps       (args))
                       (list 'test-name  (params 0))))))
