@@ -15,17 +15,17 @@
 
 ;;; define some terminal color
 
-(constant '+fg-light-red+    "\027[31m")
-(constant '+fg-light-green+  "\027[32m")
-(constant '+fg-light-yellow+ "\027[1;33m")
-(constant '+fg-red+          "\027[1;31m")
-(constant '+fg-green+        "\027[1;32m")
-(constant '+fg-yellow+       "\027[33m")
+(constant '+fg-light-red+     "\027[1;31m")
+(constant '+fg-light-green+   "\027[1;32m")
+(constant '+fg-light-yellow+  "\027[1;33m")
+(constant '+fg-red+           "\027[31m")
+(constant '+fg-green+         "\027[32m")
+(constant '+fg-yellow+        "\027[33m")
 
-(constant '+bg-cyan+         "\027[46m")
-(constant '+bg-dark-gray+    "\027[1;40m")
+(constant '+bg-cyan+          "\027[46m")
+(constant '+bg-dark-gray+     "\027[1;40m")
 
-(constant '+reset+           "\027[0m")
+(constant '+reset+            "\027[0m")
 
 ;;; colorize a string
 (define (colorize color str)
@@ -57,8 +57,8 @@
 (define (report-failure expression)
   (let (report
         (if (true? *verbose*)
-            (colorize 'fg-light-red "--> " (string expression) " FAILED!")
-            (colorize 'fg-light-red
+            (colorize 'fg-red "--> " (string expression) " FAILED!")
+            (colorize 'fg-red
                       ;; "--> Expression: " (string (expression 2))
                       "--> " (string expression)
                       " => Expected: " (string (eval (expression 1)))
@@ -79,7 +79,7 @@
 
 ;;; requert result of a passed test
 (define (report-pass expression)
-  (let (report (colorize 'fg-light-green "--> " (string expression) " passed"))
+  (let (report (colorize 'fg-green "--> " (string expression) " passed"))
     (if *report-passed*
         (println report)))
   true)
@@ -98,7 +98,7 @@
       'not-an-assertion))
 
 (define-macro (check test-case cur-test)
-  (println)
+;;  (println)
   (println "Testing " (eval cur-test))
 
   (letn (time-running 0 result-list '())
@@ -119,9 +119,9 @@
 
       ;; colorize if necessary
       (if (< 0 passed-ass)
-          (setq msg-passed (colorize 'fg-green msg-passed)))
+          (setq msg-passed (colorize 'fg-light-green msg-passed)))
       (if (< 0 failed-ass)
-          (setq msg-failed (colorize 'fg-red msg-failed)))
+          (setq msg-failed (colorize 'fg-light-red msg-failed)))
 
       (println "-> Total assertions: " total-ass)
       (println "   - " msg-passed)
@@ -134,13 +134,16 @@
 
 ;;; run all test cases, aka functions of the form ``test_``
 (define (run-all cont)
+  (println "======================================================================")
   (letn (counter 0 failed 0 passed 0 time-running 0)
     (dotree (symbol cont)
       (if (starts-with (term symbol) "test_")
-          (inc time-running
-               (time (if (apply symbol)
-                         (inc passed)
-                         (inc failed))))))
+          (begin
+            (inc time-running
+                 (time (if (apply symbol)
+                           (inc passed)
+                           (inc failed))))
+            (println "----------------------------------------------------------------------"))))
 
     ;; make report and colorize if necessary
     (setq counter (+ failed passed))
@@ -155,7 +158,7 @@
                            (colorize 'fg-red
                                      "FAILED (failures = "
                                      (string failed) ")"))))
-    (println)))
+    (println "======================================================================")))
 
 ;;;
 ;;; convenient methods in context 'MAIN

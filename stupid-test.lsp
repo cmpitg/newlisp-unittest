@@ -2,6 +2,8 @@
 
 (context 'MAIN)
 
+(println)
+
 (define-test (test+)
   (= 1 1)
   (assert= 1 (+ 0 1))
@@ -25,5 +27,7 @@
       true (* n (factorial (- n 1)))))
 
 (UnitTest:run-all 'MAIN)
+
+(println)
 
 (exit)
