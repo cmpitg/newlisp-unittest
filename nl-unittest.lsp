@@ -158,7 +158,8 @@
                            (colorize 'fg-red
                                      "FAILED (failures = "
                                      (string failed) ")"))))
-    (println "======================================================================")))
+    (println "======================================================================")
+    (zero? failed)))
 
 ;;;
 ;;; convenient methods in context 'MAIN
@@ -189,3 +190,7 @@
                 (list (list 'signature  params)
                       (list 'exps       (args))
                       (list 'test-name  (params 0))))))
+
+;;; make all symbol used for testing available
+(global 'assert=)
+(global 'define-test)
