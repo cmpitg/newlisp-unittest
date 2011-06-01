@@ -55,6 +55,8 @@ TODO
 ====
 
 * Fix time calculation.
+* More options about output.
+* Separating output and results.
 
 License
 =======

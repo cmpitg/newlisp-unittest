@@ -86,8 +86,9 @@
 
 (define (assertion? form)
   ;; a symbol is an assertion only it ends with "assert="
-  (ends-with (term (first form))
-             "assert="))
+  (local (res)
+    (catch (term (first form)) 'res)
+    (ends-with res "assert=")))
 
 (define (report-result test-case)
   (catch (eval test-case) 'res)
@@ -99,7 +100,7 @@
 
 (define-macro (check test-case cur-test)
 ;;  (println)
-  (println "Testing " (eval cur-test))
+  (println "=== Testing " (eval cur-test))
 
   (letn (time-running 0 result-list '())
 
@@ -123,10 +124,10 @@
       (if (< 0 failed-ass)
           (setq msg-failed (colorize 'fg-light-red msg-failed)))
 
-      (println "-> Total assertions: " total-ass)
-      (println "   - " msg-passed)
-      (println "   - " msg-failed)
-      (println "   - Total time: " time-running "ms")
+      (println ">>> Total assertions: " total-ass)
+      (println "  - " msg-passed)
+      (println "  - " msg-failed)
+      (println "  - Total time: " time-running "ms")
       (println)
 
       ;; the test case is considered passed only if there's no failure
@@ -134,6 +135,7 @@
 
 ;;; run all test cases, aka functions of the form ``test_``
 (define (run-all cont)
+  (println)
   (println "======================================================================")
   (letn (counter 0 failed 0 passed 0 time-running 0)
     (dotree (symbol cont)
@@ -159,6 +161,7 @@
                                      "FAILED (failures = "
                                      (string failed) ")"))))
     (println "======================================================================")
+    (println)
     (zero? failed)))
 
 ;;;
