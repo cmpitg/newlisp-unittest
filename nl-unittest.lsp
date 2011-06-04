@@ -85,7 +85,7 @@
   true)
 
 (define (assertion? form)
-  ;; a symbol is an assertion only it ends with "assert="
+  ;; a symbol is an assertion only if it contains "assert="
   (local (res)
     (catch (term (first form)) 'res)
     (ends-with res "assert=")))

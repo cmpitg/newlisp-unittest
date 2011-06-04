@@ -1,3 +1,5 @@
+#!/usr/bin/newlisp
+
 (load "nl-unittest.lsp")
 
 (context 'MAIN)
@@ -18,9 +20,12 @@
   (assert= '(1 2 3) (sequence 1 3)))
 
 (define-test (test_two)
-  (assert= "Hello" "Heo")
-  (assert= 6 (factorial 2))
-  (assert= 10 (f)))
+    ""
+  (local (x)
+    (setq x "Should run")
+    (assert= "Hello" "Heo")
+    (assert= 6 (factorial 2))
+    (assert= 10 (f))))
 
 (define (factorial n)
   (if (= 0 n) 1
