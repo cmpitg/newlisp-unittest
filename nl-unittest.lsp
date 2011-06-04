@@ -98,7 +98,7 @@
           (report-error test-case res))
       'not-an-assertion))
 
-(define-macro (check test-case cur-test)
+(define-macro (check test-cases cur-test)
 ;;  (println)
   (println "=== Testing " (eval cur-test))
 
@@ -106,7 +106,7 @@
 
     ;; calculate result and time at the same time
     (setq time-running
-          (time (setq result-list (map report-result test-case))))
+          (time (setq result-list (map report-result test-cases))))
 
     ;; because result-list may contain non-assertion expression, we
     ;; need to filter them out
@@ -173,8 +173,10 @@
 ;;;
 ;;; alias for ``=`` for testing clarification
 ;;;
-(define (assert=)
-  (apply = (args)))
+(define-macro (assert= expected expression)
+  (eval '(apply = (list (eval expected) (eval expression))))
+  ;; ***report-result should be here
+  )
 
 ;;;
 ;;; what this functions does are
