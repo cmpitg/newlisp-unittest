@@ -59,7 +59,6 @@ TODO
 * Separating output and results.
 * Assertions inside other forms (Done! Sun, 05 Jun 2011 00:34:31 +0700)
 
-
 License
 =======
 

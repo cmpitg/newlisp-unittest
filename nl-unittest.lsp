@@ -90,14 +90,6 @@
     (catch (term (first form)) 'res)
     (ends-with res "assert=")))
 
-;; (define (report-result test-case)
-;;   (catch (eval test-case) 'res)
-;;   (if (assertion? test-case)            ; report only at assertion
-;;       (if (= true res) (report-pass test-case)
-;;           (= nil res) (report-failure test-case)
-;;           (report-error test-case res))
-;;       'not-an-assertion))
-
 (define (report-result expr res)
   ;; (println "-- debug; report-result => " expr " -> " res)
   (if (= true res) (report-pass expr)
