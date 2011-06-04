@@ -57,7 +57,8 @@ TODO
 * Fix time calculation.
 * More options about output.
 * Separating output and results.
-* assertion inside other forms.
+* Assertions inside other forms (Done! Sun, 05 Jun 2011 00:34:31 +0700)
+
 
 License
 =======

@@ -90,13 +90,35 @@
     (catch (term (first form)) 'res)
     (ends-with res "assert=")))
 
-(define (report-result test-case)
-  (catch (eval test-case) 'res)
-  (if (assertion? test-case)            ; report only at assertion
-      (if (= true res) (report-pass test-case)
-          (= nil res) (report-failure test-case)
-          (report-error test-case res))
-      'not-an-assertion))
+;; (define (report-result test-case)
+;;   (catch (eval test-case) 'res)
+;;   (if (assertion? test-case)            ; report only at assertion
+;;       (if (= true res) (report-pass test-case)
+;;           (= nil res) (report-failure test-case)
+;;           (report-error test-case res))
+;;       'not-an-assertion))
+
+(define (report-result expr res)
+  ;; (println "-- debug; report-result => " expr " -> " res)
+  (if (= true res) (report-pass expr)
+      (= nil res) (report-failure expr)
+      (report-error expr res)))
+
+;;; run all the test cases and return the list of results
+(define (run-and-report cases , res)
+  (setq res '())
+  (dolist (single-case cases)
+    (let (*cur-results* '() *cur-expressions* '())
+      (catch (eval single-case) 'some-error)
+
+      ;; now, we have the list current results as well as their
+      ;; corresponding expressions: ``*cur-results*`` and
+      ;; ``*cur-expressions*``
+      (dotimes (idx (length *cur-results*))
+        (report-result (*cur-expressions* idx)
+                       (*cur-results* idx)))
+
+      (setq res (append res *cur-results*)))))
 
 (define-macro (check test-cases cur-test)
 ;;  (println)
@@ -106,7 +128,7 @@
 
     ;; calculate result and time at the same time
     (setq time-running
-          (time (setq result-list (map report-result test-cases))))
+          (time (setq result-list (run-and-report test-cases))))
 
     ;; because result-list may contain non-assertion expression, we
     ;; need to filter them out
@@ -173,10 +195,18 @@
 ;;;
 ;;; alias for ``=`` for testing clarification
 ;;;
-(define-macro (assert= expected expression)
-  (eval '(apply = (list (eval expected) (eval expression))))
-  ;; ***report-result should be here
-  )
+(define-macro (assert= expected expression , _ass-result)
+  (catch
+      (eval '(apply = (list (eval expected) (eval expression))))
+    '_ass-result)
+  ;; eval the expression and save the result
+  (push _ass-result UnitTest:*cur-results* -1)
+  ;; save the expression as symbol
+  (push (list 'assert= expected expression)
+        UnitTest:*cur-expressions* -1)
+  ;; (println "-- debug => " (list 'assert= expected expression) " -> "
+  ;;          _ass-result)
+  _ass-result)
 
 ;;;
 ;;; what this functions does are
