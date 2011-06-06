@@ -126,7 +126,7 @@
     ;; need to filter them out
     (letn ((passed-ass (length (filter (lambda (x) (= true x))
                                        result-list)))
-           (failed-ass (length (filter (lambda (x) (= nil x))
+           (failed-ass (length (filter (lambda (x) (!= true x))
                                        result-list)))
            (total-ass (+ passed-ass failed-ass))
            (msg-passed (append (string passed-ass) " pass(es)"))
